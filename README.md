@@ -1,5 +1,8 @@
 # Gravity Model
 
+[![DOI](https://sandbox.zenodo.org/badge/645701482.svg)](https://sandbox.zenodo.org/badge/latestdoi/645701482)
+
+
 ## Project organization
 - PG = project-generated
 - HW = human-writable
