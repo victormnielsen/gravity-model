@@ -1,81 +1,104 @@
+# libraries
+library(readr)
+library(docstring)
+
+# parameters
+size <- 18 #size of the matrix grid
+gamma <- -0.07 #commuting cost
+
+# commuting distances 
+# c <- toeplitz(0:size) #creates a matrix with size+1 rows and columns where first row goes from 0-size - original had size = 9
+gravity_commute <- read_delim("Gravity commute.csv", 
+                              ";", escape_double = FALSE, col_names = FALSE, 
+                              trim_ws = TRUE)
+c <- as.matrix(Gravity_commute) 
+
+# shares of housing and employment (first is the excel file and second is a random allocation more flexible to the size of the matrix)
+# h_share <- c(0.05,0.075,0.1,0.15,0.15,0.15,0.15,0.1,0.05,0.025)
+# e_share <- c(0.6,0.15,0.025,0.025,0.025,0.025,0.025,0.05,0.05,0.025)
+
+h_share <- diff(c(0, sort(runif(size)), 1)) #creates an array of [size] random numbers in a random sequence that all add up to 1
+e_share <- diff(c(0, sort(runif(size)), 1)) #creates an array of [size] random numbers in a random sequence that all add up to 1
+
+# initial alphas and betas (first is for the excel file and second is more flexible to the size of the matrix)
+# alpha <- numeric(10)
+# beta <- numeric(10)
+
+alpha <- numeric(size + 1)
+beta <- numeric(size + 1)
+
+get_beta <- function(alpha) {
+  #' @title calculates betas
+  #' @description This function creates a matrix as a mid calculation to
+  #' calculate the betas based on the alphas. 
+  #' @param alpha a vector of values used to calculate the betas
+  #' @return the updated betas
+  a_matrix <- exp(alpha + t(c) * gamma)
+  #print(a_matrix)
+  beta <- log(e_share) - log(colSums(a_matrix))
+  beta_1 <<- log(e_share) - log(colSums(a_matrix))
+  beta <<- beta - beta[[1]]
+}
 
 
+get_alpha <- function(beta) {
+  #' @title calculates alphas
+  #' @description This function creates a matrix as a mid calculation to
+  #' calculate the alphas based on the betas 
+  #' @param beta a vector of values used to calculate the alphas
+  #' @return the updated alphas
+  b_matrix <- t(exp(beta + t(c) * gamma))
+  alpha <- log(h_share) - log(rowSums(b_matrix))
+  alpha <<- alpha - alpha[[1]]
+}
 
-distances <- cbind(c(0,1,2,3,4,5,6,7,8,9),
-                   c(1,0,1,2,3,4,5,6,7,8),
-                   c(2,1,0,1,2,3,4,5,6,7),
-                   c(3,2,1,0,1,2,3,4,5,6),
-                   c(4,3,2,1,0,1,2,3,4,5),
-                   c(5,4,3,2,1,0,1,2,3,4),
-                   c(6,5,4,3,2,1,0,1,2,3),
-                   c(7,6,5,4,3,2,1,0,1,2),
-                   c(8,7,6,5,4,3,2,1,0,1),
-                   c(9,8,7,6,5,4,3,2,1,0))
+# calculates the share of each pair of housing and employment
+get_pi_ij <- function(alpha,beta) {
+  # creates a matrix where the alphas are repeated along columns
+  alphas <-
+    matrix(alpha,
+           nrow = length(alpha),
+           ncol = length(alpha),
+           byrow = FALSE)
+  # creates a matrix where the betas are repeated along rows
+  betas <-
+    matrix(beta_1,
+           nrow = length(beta_1),
+           ncol = length(beta_1),
+           byrow = TRUE) 
+  # makes this calculation more fluid to have created the matrices:
+  pi_ij <<- exp(alphas + betas + gamma * c)
+}
 
-hshare <- c(0.05,0.075,0.1,0.15,0.15,0.15,0.15,0.1,0.05,0.025)
-jshare <- c(0.6,0.15,0.025,0.025,0.025,0.025,0.025,0.05,0.05,0.025)
+# calculates the average commute
+get_commutes <- function(pi_ij) {
+  commute <- pi_ij * c
+  commute <<- pi_ij * c
+  avgcommute <<- sum(commute)
+}
 
-c <- -0.07
+#iterates through the above functions until the right alphas and betas have been found
+iteration <- 0
+precision <- 0.0001
+repeat { 
+  get_beta(alpha)
+  get_alpha(beta)
+  get_pi_ij(alpha, beta)
+  get_commutes(pi_ij)
+  print(paste0("average commute: ", avgcommute))
+  print(paste0("iterations: ", iteration))
+  iteration <- iteration + 1
+  if (abs(h_share - rowSums(pi_ij)) < precision &&
+      abs(e_share - colSums(pi_ij)) < precision)
+    break
+} 
 
-init_a <- c(0,0,0,0,0,0,0,0,0,0)
+# make a function that does the repeat thing of the other functions 
+# and each time it returns the average commute from a new gamma that increases
+# every time that it runs by 1% 
 
-matrix_a_init <- exp(init_a+t(distances)*c)
-matrix_a_init
+git add src/gravity-commute.R
+git commit -m "cleaned it up and added comments and made functions to be able to repeat until converging"
+git push
 
-init_b_ <- log(jshare)-log(colSums(matrix_a_init))
-init_b_
-init_b <- init_b_-init_b_[[1]]
-init_b
-
-matrix_b_init <- t(exp(init_b+t(distances)*c))
-matrix_b_init
-
-first_a_ <- log(hshare)-log(rowSums(matrix_b_init))
-first_a_
-first_a <- first_a_-first_a_[[1]]
-first_a
-
-matrix_a_1 <- exp(first_a+t(distances)*c)
-matrix_a_1
-
-first_b_ <- log(jshare)-log(colSums(matrix_a_1))
-first_b_
-first_b <- first_b_-first_b_[[1]]
-first_b
-
-matrix_b_1 <- t(exp(first_b+t(distances)*c))
-matrix_b_1
-
-second_a_ <- log(hshare)-log(rowSums(matrix_b_1))
-second_a_
-second_a <- second_a_-second_a_[[1]]
-second_a
-
-matrix_a_2 <- exp(second_a+t(distances)*c)
-matrix_a_2
-
-second_b_ <- log(jshare)-log(colSums(matrix_a_2))
-second_b_
-second_b <- second_b_-second_b_[[1]]
-second_b
-
-second_a_asmatrix <- matrix(second_a, nrow=length(second_a), ncol=length(second_a), byrow=FALSE)
-second_a_asmatrix
-second_b_asmatrix <- matrix(second_b_, nrow=length(second_b_), ncol=length(second_b_), byrow=TRUE)
-second_b_asmatrix
-
-fractions <- exp(second_a_asmatrix+second_b_asmatrix+c*distances)
-fractions
-
-hshare_confirm <- rowSums(fractions)
-hshare_confirm
-jshare_confirm <- colSums(fractions)
-jshare_confirm
-
-commutes <- fractions*distances
-commutes
-
-average <- sum(commutes)
-average
-
-### I should be able to automate line 25-60
+git commit src/gravity-commute.R -m "cleaned it up and added comments and made functions to be able to repeat until converging
