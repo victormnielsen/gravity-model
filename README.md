@@ -2,6 +2,11 @@
 
 [![DOI](https://sandbox.zenodo.org/badge/645701482.svg)](https://sandbox.zenodo.org/badge/latestdoi/645701482)
 
+This project is a gravity model that estimates the average commute based on 
+a matrix of combinations of housing and employment. It allows for multiple types
+of city configurations. The one that imports a .csv file takes on a specific
+city shape with a centre and surrounding suburbs that are interconnected in a 
+hex grid. There are 4 kilometers between each node in that file. 
 
 ## Project organization
 - PG = project-generated

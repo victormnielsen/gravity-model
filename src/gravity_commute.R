@@ -31,10 +31,10 @@ get_beta <- function(alpha) {
   #' @title calculates betas
   #' @description This function creates a matrix as a mid calculation to
   #' calculate the betas based on the alphas. 
-  #' @param alpha a vector of values used to calculate the betas
+  #' @param alpha a vector of values used to calculate the betas.
+  #' It describes the attractiveness of a location for employment. 
   #' @return the updated betas
   a_matrix <- exp(alpha + t(c) * gamma)
-  #print(a_matrix)
   beta <- log(e_share) - log(colSums(a_matrix))
   beta_1 <<- log(e_share) - log(colSums(a_matrix))
   beta <<- beta - beta[[1]]
@@ -45,7 +45,8 @@ get_alpha <- function(beta) {
   #' @title calculates alphas
   #' @description This function creates a matrix as a mid calculation to
   #' calculate the alphas based on the betas 
-  #' @param beta a vector of values used to calculate the alphas
+  #' @param beta a vector of values used to calculate the alphas. 
+  #' It desribes the attractiveness of a location for housing
   #' @return the updated alphas
   b_matrix <- t(exp(beta + t(c) * gamma))
   alpha <- log(h_share) - log(rowSums(b_matrix))
@@ -93,6 +94,7 @@ repeat {
     break
 } 
 
+# TODO:
 # make a function that does the repeat thing of the other functions 
 # and each time it returns the average commute from a new gamma that increases
 # every time that it runs by 1% 
