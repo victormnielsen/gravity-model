@@ -1,4 +1,4 @@
-# [PROJECT NAME]
+# Gravity Model
 
 ## Project organization
 - PG = project-generated
@@ -28,6 +28,25 @@
 
 ```
 
+## Dependencies
+```
+R version 4.0.3 (2020-10-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS  13.3.1
+
+Matrix products: default
+LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+[1] compiler_4.0.3  tools_4.0.3     rstudioapi_0.13
+```
+To load the dependencies correctly, you have to `install.packages("renv")` and then use `renv::restore()`
 
 ## License
 

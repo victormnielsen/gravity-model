@@ -96,9 +96,3 @@ repeat {
 # make a function that does the repeat thing of the other functions 
 # and each time it returns the average commute from a new gamma that increases
 # every time that it runs by 1% 
-
-git add src/gravity-commute.R
-git commit -m "cleaned it up and added comments and made functions to be able to repeat until converging"
-git push
-
-git commit src/gravity-commute.R -m "cleaned it up and added comments and made functions to be able to repeat until converging
